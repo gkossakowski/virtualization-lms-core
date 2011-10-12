@@ -107,14 +107,12 @@ trait Effects extends Expressions with Utils {
     case _ => super.effectSyms(x)
   }
 
-  def readSyms(e: Any): List[Sym[Any]] = e match {
+  override def readSyms(e: Any): List[Sym[Any]] = e match {
     case Reflect(x, u, es) => readSyms(x) // ignore effect deps (they are not read!)
     case Reify(x, u, es) => 
       if (es contains x) Nil // FIXME this piece of logic is not clear. is it a special case for unit??
       else readSyms(x) // result of block is not read but passed through!
-    case s: Sym[Any] => List(s)
-    case p: Product => p.productIterator.toList.flatMap(readSyms(_))
-    case _ => Nil
+    case _ => super.readSyms(e)
   }
 
   /*

@@ -84,7 +84,11 @@ trait Expressions extends Utils {
     case _ => Nil
   }
 
-
+  def readSyms(e: Any): List[Sym[Any]] = e match {
+    case s: Sym[Any] => List(s)
+    case p: Product => p.productIterator.toList.flatMap(readSyms(_))
+    case _ => Nil
+  }
 
   def rsyms[T](e: Any)(f: Any=>List[T]): List[T] = e match {
     case s: Sym[Any] => f(s)
